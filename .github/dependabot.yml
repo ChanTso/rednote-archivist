@@ -1,12 +1,8 @@
 version: 2
+# Python receives Dependabot security updates from repository settings.
+# Routine Python version updates are reviewed manually to avoid noisy or
+# platform-unsafe OCR upgrades.
 updates:
-  - package-ecosystem: "uv"
-    directory: "/"
-    schedule:
-      interval: "monthly"
-    # Routine version updates are reviewed manually. This does not disable
-    # Dependabot security updates configured in repository settings.
-    open-pull-requests-limit: 0
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
