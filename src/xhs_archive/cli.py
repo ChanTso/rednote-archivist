@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 from difflib import SequenceMatcher
 from typing import Annotated
+from urllib.parse import urlsplit
 
 import typer
 from PIL import Image, ImageStat
@@ -33,6 +34,7 @@ from .utils import read_json
 from .utils import write_json
 
 app = typer.Typer(no_args_is_help=True)
+_ALLOWED_BOARD_HOSTS = frozenset({"xiaohongshu.com", "www.xiaohongshu.com"})
 
 
 def _json(data: object) -> None:
@@ -59,29 +61,55 @@ def _module_importable(name: str) -> bool:
     return importlib.util.find_spec(name) is not None
 
 
+def _validated_board_url(value: str) -> str:
+    candidate = value.strip()
+    try:
+        parsed = urlsplit(candidate)
+        hostname = (parsed.hostname or "").rstrip(".").lower()
+        port = parsed.port
+    except ValueError as exc:
+        raise typer.BadParameter("收藏专辑 URL 无效。") from exc
+    if (
+        parsed.scheme != "https"
+        or hostname not in _ALLOWED_BOARD_HOSTS
+        or parsed.username is not None
+        or parsed.password is not None
+        or port not in {None, 443}
+        or not parsed.path.startswith("/board/")
+    ):
+        raise typer.BadParameter("收藏专辑 URL 必须是 https://www.xiaohongshu.com/board/...。")
+    return candidate
+
+
 def _resolve_board_url(board_url: str | None) -> str:
     if board_url:
-        return board_url
+        return _validated_board_url(board_url)
     env_url = os.environ.get("XHS_BOARD_URL")
     if env_url:
-        return env_url
+        return _validated_board_url(env_url)
     paste = _run_command(["/usr/bin/pbpaste"])
-    if paste and "xiaohongshu.com" in paste:
-        return paste.strip()
+    if paste:
+        try:
+            return _validated_board_url(paste)
+        except typer.BadParameter:
+            pass
     raise typer.BadParameter("缺少收藏专辑 URL：请设置 XHS_BOARD_URL 或传入 --board-url。")
+
+
+def _path_is_within(candidate: str, root: str) -> bool:
+    normalized_candidate = os.path.normcase(os.path.normpath(candidate))
+    normalized_root = os.path.normcase(os.path.normpath(root))
+    try:
+        return os.path.commonpath([normalized_candidate, normalized_root]) == normalized_root
+    except ValueError:
+        return False
 
 
 @app.command()
 def doctor(json_output: Annotated[bool, typer.Option("--json", help="Output JSON.")] = False) -> None:
     cfg = load_config()
     conda_prefix = os.environ.get("CONDA_PREFIX")
-    sys_prefix = Path(sys.prefix).resolve()
-    conda_active = False
-    if conda_prefix:
-        try:
-            conda_active = sys_prefix.is_relative_to(Path(conda_prefix).resolve())
-        except Exception:
-            conda_active = False
+    conda_active = bool(conda_prefix and _path_is_within(sys.prefix, conda_prefix))
     paddle_importable = _module_importable("paddle")
     paddle_device = None
     if paddle_importable:
