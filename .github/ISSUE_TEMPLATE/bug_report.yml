@@ -1,0 +1,35 @@
+name: Bug report
+description: Report a reproducible problem without sharing private archive data.
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not attach cookies, browser profiles, private collection URLs, account IDs, note IDs, screenshots, or archived content.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Provide minimal steps using synthetic or redacted input.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Paste a reviewed and redacted `xhs-archive doctor --json` summary.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy check
+      options:
+        - label: I removed credentials, personal data, private URLs, and archived content.
+          required: true

@@ -1,0 +1,56 @@
+[data]
+root = "data"
+
+[browser]
+headless = false
+slow_mo_ms = 100
+min_delay_seconds = 3
+max_delay_seconds = 7
+concurrency = 1
+save_page_screenshot = true
+
+[collector]
+stable_rounds = 5
+scroll_step_px = 900
+max_scroll_rounds = 500
+recovery_scroll_attempts = 8
+recovery_delay_seconds = 5.0
+fine_scan_step_px = 320
+fine_scan_delay_ms = 450
+
+[fetch]
+max_retries = 3
+timeout_seconds = 60
+
+[ocr]
+engine = "auto"
+device = "cpu"
+primary_engine = "pp-ocrv6-medium"
+secondary_engine = "apple-vision"
+vision_recognition_level = "accurate"
+standard_confidence_threshold = 0.82
+max_workers = 2
+ppocr_workers = 2
+vision_workers = 2
+vl_workers = 1
+enable_vl_fallback = true
+enable_vl_adjudication = true
+vl_engine = "paddleocr-vl-1.6"
+vl_backend = "mlx-vlm"
+vl_benchmark_required = true
+vl_max_seconds_per_image = 60
+preserve_all_candidates = true
+preserve_raw_boxes = true
+preserve_region_crops = true
+agreement_threshold = 0.97
+exclusive_character_threshold = 5
+rerun_scale = 2.0
+local_rerun_scale = 3.0
+tile_overlap_ratio = 0.15
+detect_thumbnail = true
+require_original_pixel_ocr_first = true
+generate_overlay_on_conflict = true
+
+[render]
+include_original_images = true
+include_raw_ocr_confidence = true

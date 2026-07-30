@@ -1,0 +1,26 @@
+{
+  "data": {
+    "board": {
+      "id": "aaaaaaaaaaaaaaaaaaaaaaaa",
+      "cursor": "cursor_001",
+      "has_more": false,
+      "notes": [
+        {
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbb",
+          "display_title": "Synthetic Redis interview notes",
+          "xsec_token": "synthetic-token",
+          "cover": {
+            "url": "https://sns-img-qc.xhscdn.com/example"
+          }
+        },
+        {
+          "note_card": {
+            "note_id": "cccccccccccccccccccccccc",
+            "display_title": "Synthetic JVM questions",
+            "url": "https://www.xiaohongshu.com/explore/cccccccccccccccccccccccc?xsec_token=synthetic"
+          }
+        }
+      ]
+    }
+  }
+}

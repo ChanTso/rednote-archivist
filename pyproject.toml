@@ -1,0 +1,87 @@
+[project]
+name = "rednote-archivist"
+version = "0.1.0"
+description = "Local-first, resumable RedNote collection archiver with OCR evidence and integrity checks."
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+license = { file = "LICENSE" }
+keywords = ["archive", "ocr", "rednote", "resumable", "sqlite", "xiaohongshu"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS :: MacOS X",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Database",
+    "Topic :: Multimedia :: Graphics :: Capture :: Scanners",
+]
+dependencies = [
+    "beautifulsoup4>=4.13",
+    "httpx>=0.28",
+    "lxml>=5.3",
+    "onnxruntime>=1.27.0",
+    "paddleocr>=3.0",
+    "paddlepaddle==3.2.1",
+    "pillow>=12.3.0",
+    "playwright>=1.55",
+    "pydantic>=2.10",
+    "pyyaml>=6.0",
+    "rapidocr>=3.9.0",
+    "typer>=0.16",
+]
+
+[project.scripts]
+xhs-archive = "xhs_archive.cli:app"
+
+[project.urls]
+Homepage = "https://github.com/ChanTso/rednote-archivist"
+Issues = "https://github.com/ChanTso/rednote-archivist/issues"
+Repository = "https://github.com/ChanTso/rednote-archivist"
+
+[project.optional-dependencies]
+ocr-rapid = [
+    "onnxruntime>=1.20",
+    "rapidocr>=3.0",
+]
+paddle = [
+    "paddleocr>=3.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.12",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/xhs_archive"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/xhs_archive", "README.md", "pyproject.toml"]
+
+[tool.uv]
+package = true
+
+[tool.uv.sources]
+paddlepaddle = { index = "paddle-cpu" }
+
+[[tool.uv.index]]
+name = "paddle-cpu"
+url = "https://www.paddlepaddle.org.cn/packages/stable/cpu/"
+explicit = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"
+
+[tool.ruff]
+target-version = "py311"
+line-length = 140
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
